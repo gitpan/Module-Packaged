@@ -16,7 +16,7 @@ is_deeply($dists, {
 
 $dists = $p->check('Archive-Tar');
 is_deeply($dists, {
-  cpan    => '1.07',
+  cpan    => '1.08',
   debian  => '1.03',
   freebsd => '1.07',
   gentoo  => '1.03',

@@ -10,7 +10,7 @@ use LWP::Simple qw(mirror);
 use Parse::Debian::Packages;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.71';
+$VERSION = '0.72';
 
 sub new {
   my $class = shift;
@@ -213,14 +213,16 @@ Module::Packaged - Report upon packages of CPAN distributions
   my $dists = $p->check('Archive-Tar');
   # $dists is now:
   # {
-  # cpan    => '1.07',
+  # cpan    => '1.08',
   # debian  => '1.03',
   # freebsd => '1.07',
   # gentoo  => '1.03',
   # openbsd => '0.22',
   # }
-  # meaning that Archive-Tar is at version 1.07 on CPAN and FreeBSD
-  # but only version 1.03 on Debian Gentoo and 0.22 on OpenBSD
+
+  # meaning that Archive-Tar is at version 1.08 on CPAN but only at
+  # version 1.07 on FreeBSD, version 1.03 on Debian Gentoo and 0.22 on
+  # OpenBSD
 
 =head1 DESCRIPTION
 

@@ -1,5 +1,8 @@
 Revision history for Perl module Module::Packaged.
 
+0.72 Wed Jan  7 16:25:31 GMT 2004
+  - a new version of Archive::Tar came out, update the tests
+
 0.71 Mon Jan  5 16:14:32 GMT 2004
   - a new version of DBI came out, update the tests
 

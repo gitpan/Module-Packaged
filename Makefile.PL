@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile
   (
    NAME        => 'Module::Packaged',
-   VERSION     => '0.71',
+   VERSION     => '0.72',
    PL_FILES    => {},
    INSTALLDIRS => 'site',
    PREREQ_PM   => {

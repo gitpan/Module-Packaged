@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Module-Packaged
-version: 0.71
+version: 0.72
 license: perl
 distribution_type: module
 requires:
@@ -19,5 +19,5 @@ conflicts: {}
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.71
+    version: 0.72
 generated_by: Module::Build version 0.21
