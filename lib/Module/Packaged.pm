@@ -10,7 +10,7 @@ use LWP::Simple qw(mirror);
 use Parse::Debian::Packages;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.67';
+$VERSION = '0.71';
 
 sub new {
   my $class = shift;

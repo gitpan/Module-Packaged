@@ -25,7 +25,7 @@ is_deeply($dists, {
 
 $dists = $p->check('DBI');
 is_deeply($dists, {
-  cpan    => '1.38',
+  cpan    => '1.39',
   debian  => '1.38',
   freebsd => '1.37',
   gentoo  => '1.37',

@@ -1,5 +1,8 @@
 Revision history for Perl module Module::Packaged.
 
+0.71 Mon Jan  5 16:14:32 GMT 2004
+  - a new version of DBI came out, update the tests
+
 0.67 Tue Nov 18 22:16:11 GMT 2003
   - added OpenBSD support (thanks to Richard Clamp, again)
 
