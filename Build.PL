@@ -6,7 +6,6 @@ my $build = Module::Build->new(
   license     => 'perl',
   module_name => 'Module::Packaged',
   requires    => {
-    'Cache::Cache'        => '1.02',
     'IO::File'            => '1.08',
     'IO::Zlib'            => '1.01',
     'LWP::Simple'         => '1.38',

@@ -1,5 +1,9 @@
 Revision history for Perl module Module::Packaged.
 
+0.76 Tue Aug 24 16:14:25 BST 2004
+  - removed dependency on Cache::Cache
+  - updated the tests (maybe I should fix the test suite, eh?)
+
 0.74 Thu Apr 22 17:17:21 BST 2004
   - resupport Gentoo (thanks to patch from Michael Cummings)
   - remove Perl6::Slurp dependency (sorry, too many deps)

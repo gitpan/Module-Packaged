@@ -16,23 +16,23 @@ is_deeply($dists, {
 
 $dists = $p->check('Archive-Tar');
 is_deeply($dists, {
-  cpan    => '1.08',
+  cpan    => '1.10',
   debian  => '1.08',
-  fedora  => '0.22',
-  freebsd => '1.08',
-  gentoo  => '1.05',
+  fedora  => '1.08',
+  freebsd => '1.08_1',
+  gentoo  => '1.09',
   openbsd => '1.03',
-  suse    => '0.23',
+  suse    => '1.08',
 }, 'Archive-Tar');
 
 $dists = $p->check('DBI');
 is_deeply($dists, {
-  cpan     => '1.42',
-  debian   => '1.41',
-  fedora   => '1.37',
+  cpan     => '1.43',
+  debian   => '1.43',
+  fedora   => '1.40',
   freebsd  => '1.37',
   gentoo   => '1.38',
   mandrake => '1.40',
   openbsd  => '1.37',
-  suse     => '1.37',
+  suse     => '1.41',
 }, 'DBI');

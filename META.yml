@@ -1,10 +1,11 @@
 --- #YAML:1.0
 name: Module-Packaged
-version: 0.74
+version: 0.76
+author:
+  - Leon Brocard, leon@astray.com
+abstract: Report upon packages of CPAN distributions
 license: perl
-distribution_type: module
 requires:
-  Cache::Cache: 1.02
   IO::File: 1.08
   IO::Zlib: 1.01
   LWP::Simple: 1.38
@@ -12,11 +13,8 @@ requires:
   Parse::Debian::Packages: 0.01
   Sort::Versions: 1.50
   Test::More: 0.47
-recommends: {}
-build_requires: {}
-conflicts: {}
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.74
-generated_by: Module::Build version 0.21
+    version: 0.76
+generated_by: Module::Build version 0.25

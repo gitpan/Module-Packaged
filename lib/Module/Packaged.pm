@@ -1,6 +1,5 @@
 package Module::Packaged;
 use strict;
-use Cache::FileCache;
 use IO::File;
 use IO::Zlib;
 use File::Spec::Functions qw(catdir catfile tmpdir);
@@ -8,8 +7,9 @@ use LWP::Simple qw(mirror);
 use Parse::CPAN::Packages;
 use Parse::Debian::Packages;
 use Sort::Versions;
+use Storable qw(store retrieve);
 use vars qw($VERSION);
-$VERSION = '0.74';
+$VERSION = '0.76';
 
 sub new {
   my $class = shift;
@@ -24,16 +24,11 @@ sub new {
   chmod 0777, $dir || die "Failed to chmod $dir";
   $self->{DIR} = $dir;
 
-  # The data takes a while to parse, so let's cache it
-  my $cache = Cache::FileCache->new({
-    'namespace'          => 'module_packaged',
-    'default_expires_in' => '1 hour',
-    'cache_depth'        => 1,
-  });
+  my $t = (stat "$dir/stored")[9];
 
-  my $data = $cache->get('data');
-  if (defined $data) {
+  if (defined $t && (time - $t) < 3600) {
     # It's cached, excellent
+    my $data = retrieve("$dir/stored") || die "Error reading: $!";
     $self->{data} = $data;
   } else {
     # Not cached, generate it
@@ -45,15 +40,10 @@ sub new {
     $self->fetch_mandrake;
     $self->fetch_openbsd;
     $self->fetch_suse;
-    $cache->set('data', $self->{data});
+    store($self->{data}, "$dir/stored") || die "Error storing: $!";
   }
 
   return $self;
-}
-
-sub cache {
-  my $self = shift;
-  return $self->{cache};
 }
 
 sub mirror_file {
@@ -77,7 +67,6 @@ sub fetch_cpan {
 
   my $fh = IO::Zlib->new;
   die "Error opening file $filename!" unless $fh->open($filename, "rb");
-
   my $details = join '', <$fh>;
   $fh->close;
 
