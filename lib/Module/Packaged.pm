@@ -10,7 +10,7 @@ use LWP::Simple qw(mirror);
 use Parse::Debian::Packages;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.54';
+$VERSION = '0.67';
 
 sub new {
   my $class = shift;
@@ -39,9 +39,10 @@ sub new {
   } else {
     # Not cached, generate it
     $self->fetch_cpan;
-    $self->fetch_gentoo;
-    $self->fetch_freebsd;
     $self->fetch_debian;
+    $self->fetch_freebsd;
+    $self->fetch_gentoo;
+    $self->fetch_openbsd;
     $cache->set('data', $self->{data});
   }
 
@@ -174,6 +175,22 @@ sub fetch_debian {
     }
 }
 
+sub fetch_openbsd {
+  my $self = shift;
+  my $filename = $self->mirror_file(
+      "http://www.openbsd.org/3.2_packages/i386.html",
+      "openbsd.html" );
+  my $file = read_file($filename) || die "Error opening file $filename!";
+
+  for my $package ($file =~ m/href=i386\/p5-(.*?)\.tgz-long/g) {
+    my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
+
+    # only populate if CPAN already has
+    $self->{data}{$dist}{openbsd} = $version
+      if $self->{data}{$dist};
+  }
+}
+
 sub check {
   my($self, $dist) = @_;
 
@@ -200,9 +217,10 @@ Module::Packaged - Report upon packages of CPAN distributions
   # debian  => '1.03',
   # freebsd => '1.07',
   # gentoo  => '1.03',
+  # openbsd => '0.22',
   # }
   # meaning that Archive-Tar is at version 1.07 on CPAN and FreeBSD
-  # but only version 1.03 on Debian Gentoo
+  # but only version 1.03 on Debian Gentoo and 0.22 on OpenBSD
 
 =head1 DESCRIPTION
 
@@ -211,8 +229,8 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, Debian, FreeBSD and Gentoo are currently supported. I
-want to support versions of OpenBSD, PPM, and Redhat. Patches are
+Note: only CPAN, Debian, FreeBSD, Gentoo, and OpenBSD are currently
+supported. I want to support versions of PPM, and Redhat. Patches are
 welcome.
 
 =head1 COPYRIGHT

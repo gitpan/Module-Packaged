@@ -1,7 +1,10 @@
 Revision history for Perl module Module::Packaged.
 
+0.67 Tue Nov 18 22:16:11 GMT 2003
+  - added OpenBSD support (thanks to Richard Clamp, again)
+
 0.54 Mon Nov 17 22:42:42 GMT 2003
-  - added Debian support
+  - added Debian support (thanks to Richard Clamp)
   - reworked caching
 
 0.41 Mon Nov 17 17:55:35 GMT 2003
