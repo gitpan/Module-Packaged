@@ -2,7 +2,7 @@ NAME
     Module::Packaged - Report upon packages of CPAN distributions
 
 SYNOPSIS
-      use Module::Packages;
+      use Module::Packaged;
 
       my $p = Module::Packaged->new();
       my $dists = $p->check('Archive-Tar');
@@ -27,9 +27,9 @@ DESCRIPTION
     systems. This module reports whether CPAN distributions are packaged for
     various operating systems, and which version they have.
 
-    Note: only CPAN, Debian, Fedora, FreeBSD, Gentoo, Mandrake, OpenBSD and
-    SUSE are currently supported. I want to support everything else. Patches
-    are welcome.
+    Note: only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandrake
+    (10.1), OpenBSD (3.6) and SUSE (9.2) are currently supported. I want to
+    support everything else. Patches are welcome.
 
 METHODS
   new()
@@ -44,7 +44,7 @@ METHODS
       my $dists = $p->check('Archive-Tar');
 
 COPYRIGHT
-    Copyright (c) 2003-4 Leon Brocard. All rights reserved. This program is
+    Copyright (c) 2003-5 Leon Brocard. All rights reserved. This program is
     free software; you can redistribute it and/or modify it under the same
     terms as Perl itself.
 

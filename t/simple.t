@@ -4,8 +4,8 @@ use strict;
 use Test::More tests => 4;
 use_ok('Module::Packaged');
 
-warn "\n# These tests take a while to run as we need to mirror large\n";
-warn "# files from the web and then parse them. Please be patient.\n";
+warn "\n# These tests take a while to run as we need to mirror a large\n";
+warn "# file from the web. Please be patient.\n";
 
 my $p = Module::Packaged->new();
 
@@ -28,10 +28,10 @@ is_deeply($dists, {
 
 $dists = $p->check('DBI');
 is_deeply($dists, {
-  cpan     => '1.47',
+  cpan     => '1.48',
   debian   => '1.46',
   fedora   => '1.40',
-  freebsd  => '1.47',
+  freebsd  => '1.48',
   gentoo   => '1.38',
   mandrake => '1.43',
   openbsd  => '1.43',

@@ -1,5 +1,10 @@
 Revision history for Perl module Module::Packaged:
 
+0.80 Sat Mar 26 09:33:04 CST 2005
+  - fixed tiny typo in pod (spotted by mcummings)
+  - updated the tests
+  - seperated into a generator and a client (so now faster for you!)
+
 0.79 Sun Feb  6 17:42:47 GMT 2005
   - include Mandrake contrib (oops)
 

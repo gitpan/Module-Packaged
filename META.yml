@@ -1,20 +1,25 @@
 --- #YAML:1.0
 name: Module-Packaged
-version: 0.79
+version: 0.80
 author:
   - Leon Brocard, leon@astray.com
 abstract: Report upon packages of CPAN distributions
 license: perl
 requires:
+  Compress::Zlib: 0
   IO::File: 1.08
   IO::Zlib: 1.01
   LWP::Simple: 1.38
   Parse::CPAN::Packages: 2.20
   Parse::Debian::Packages: 0.01
   Sort::Versions: 1.50
+  Storable: 0
   Test::More: 0.47
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.79
+    version: 0.80
+  Module::Packaged::Generate:
+    file: lib/Module/Packaged/Generate.pm
+    version: 0.80
 generated_by: Module::Build version 0.2605
