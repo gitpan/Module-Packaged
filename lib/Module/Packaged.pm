@@ -8,7 +8,7 @@ use File::Spec::Functions qw(catdir catfile tmpdir);
 use LWP::Simple qw(mirror);
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.34';
+$VERSION = '0.41';
 
 sub new {
   my $class = shift;
@@ -23,18 +23,29 @@ sub new {
 
   $self->fetch_cpan;
   $self->fetch_gentoo;
+  $self->fetch_freebsd;
 
   return $self;
 }
 
-sub fetch_cpan {
+sub mirror_file {
   my $self = shift;
+  my $url  = shift;
+  my $file = shift;
   my $dir  = $self->{DIR};
 
-  my $url = "http://cpan.geekflat.org/modules/02packages.details.txt.gz";
-  my $filename = catfile($dir, "02packages.gz");
+  my $filename = catfile($dir, $file);
   mirror($url, $filename);
   chmod 0666, $filename || die "Failed to chmod $filename";
+
+  return $filename;
+}
+
+sub fetch_cpan {
+  my $self = shift;
+  my $filename = $self->mirror_file(
+      "http://cpan.geekflat.org/modules/02packages.details.txt.gz",
+      "02packages.gz" );
 
   my $fh = IO::Zlib->new;
   die "Error opening file $filename!" unless $fh->open($filename, "rb");
@@ -60,12 +71,10 @@ sub fetch_cpan {
 
 sub fetch_gentoo {
   my $self = shift;
-  my $dir  = $self->{DIR};
 
-  my $url = "http://www.gentoo.org/dyn/pkgs/dev-perl/index.xml";
-  my $filename = catfile($dir, "gentoo.html");
-  mirror($url, $filename);
-  chmod 0666, $filename || die "Failed to chmod $filename";
+  my $filename = $self->mirror_file(
+      "http://www.gentoo.org/dyn/pkgs/dev-perl/index.xml",
+      "gentoo.html");
 
   my $file = read_file($filename) || die "Error opening file $filename!";
   $file =~ s{</a></td>\n}{</a></td>}g;
@@ -98,6 +107,23 @@ sub fetch_gentoo {
   }
 }
 
+sub fetch_freebsd {
+  my $self = shift;
+  my $filename = $self->mirror_file( "http://www.freebsd.org/ports/perl5.html",
+                                     "freebsd.html" );
+  my $file = read_file($filename) || die "Error opening file $filename!";
+
+  for my $package ($file =~ m/a id="p5-(.*?)"/g) {
+    my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
+    # tidy up the oddness that is p5-DBI-137-1.37
+    $version =~ s/^\d+-//;
+
+    # only populate if CPAN already has
+    $self->{data}{$dist}{freebsd} = $version
+      if $self->{data}{$dist};
+  }
+}
+
 sub check {
   my($self, $dist) = @_;
 
@@ -118,8 +144,8 @@ Module::Packaged - Report upon packages of CPAN distributions
 
   my $p = Module::Packaged->new();
   my $dists = $p->check('Archive-Tar');
-  # $dists is now {cpan => '1.07', gentoo => '1.03'}
-  # meaning that Archive-Tar is at version 1.07 on CPAN
+  # $dists is now {cpan => '1.07', gentoo => '1.03', freebsd => '1.07' }
+  # meaning that Archive-Tar is at version 1.07 on CPAN and FreeBSD
   # but only version 1.03 on Gentoo
 
 =head1 DESCRIPTION
@@ -129,8 +155,8 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN and Gentoo are currently supported. I want to support
-versions of Debian, FreeBSD, OpenBSD, PPM, and Redhat. Patches are
+Note: only CPAN, FreeBSD and Gentoo are currently supported. I want to
+support versions of Debian, OpenBSD, PPM, and Redhat. Patches are
 welcome.
 
 =head1 COPYRIGHT

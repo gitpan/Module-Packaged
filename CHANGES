@@ -1,4 +1,7 @@
 Revision history for Perl module Module::Packaged.
 
+0.41 Mon Nov 17 17:55:35 GMT 2003
+  - support FreeBSD too (thanks to Richard Clamp)
+
 0.34 Thu Nov 13 19:53:01 GMT 2003
   - initial release
