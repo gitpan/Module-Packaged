@@ -1,4 +1,7 @@
-Revision history for Perl module Module::Packaged.
+Revision history for Perl module Module::Packaged:
+
+0.79 Sun Feb  6 17:42:47 GMT 2005
+  - include Mandrake contrib (oops)
 
 0.78 Sat Feb  5 17:20:48 GMT 2005
   - updated the tests

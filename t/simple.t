@@ -21,6 +21,7 @@ is_deeply($dists, {
   fedora  => '1.08',
   freebsd => '1.23',
   gentoo  => '1.23',
+  mandrake => '1.10',
   openbsd => '1.08',
   suse    => '1.08',
 }, 'Archive-Tar');

@@ -9,7 +9,7 @@ use Parse::Debian::Packages;
 use Sort::Versions;
 use Storable qw(store retrieve);
 use vars qw($VERSION);
-$VERSION = '0.78';
+$VERSION = '0.79';
 
 sub new {
   my $class = shift;
@@ -148,20 +148,23 @@ sub _fetch_suse {
 
 sub _fetch_mandrake {
   my $self = shift;
-  my $filename = $self->_mirror_file("http://www.mandrakelinux.com/en/10.1/features/14.php3", "mandrake.html" );
-  my $file = $self->_slurp($filename);
+  my $filename1 = $self->_mirror_file("http://distro.ibiblio.org/pub/Linux/distributions/mandrake/Mandrakelinux/official/current/i586/media/media_info/synthesis.hdlist_main.cz", "mandrake1.html" );
+  my $filename2 = $self->_mirror_file("http://distro.ibiblio.org/pub/Linux/distributions/mandrake/Mandrakelinux/official/current/i586/media/media_info/synthesis.hdlist_contrib.cz", "mandrake2.html" );
 
-  foreach my $line (split "\n", $file) {
-    next unless $line =~ /^<b>perl-/;
-#<b>perl-DBI 1.43-2mdk</b> : The Perl Database Interface<br>
-    my($dist, $version) = $line =~ m{perl-(.*?) (.*?)-\d+mdk};
-    next unless $dist;
+  foreach my $filename ($filename1, $filename2) {
+    my $fh = IO::Zlib->new;
+    die "Error opening file $filename!" unless $fh->open($filename, "rb");
+    foreach my $line (<$fh>) {
+# @info@perl-DBI-1.43-2mdk.i586@0@1371700@Development/Perl
+      next unless my($dist, $version) = $line =~ m{\@info\@perl-(.*)-(.*?)-\d+mdk};
 
-    # only populate if CPAN already has
-    $self->{data}{$dist}{mandrake} = $version
-      if $self->{data}{$dist};
+      # only populate if CPAN already has
+      $self->{data}{$dist}{mandrake} = $version
+	if $self->{data}{$dist};
+    }
   }
 }
+
 sub _fetch_freebsd {
   my $self = shift;
   my $filename = $self->_mirror_file( "http://www.freebsd.org/ports/perl5.html",
