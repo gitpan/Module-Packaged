@@ -9,11 +9,10 @@ my $build = Module::Build->new(
     'Cache::Cache'        => '1.02',
     'IO::File'            => '1.08',
     'IO::Zlib'            => '1.01',
-    'Perl6::Slurp'         => '0.01',
     'LWP::Simple'         => '1.38',
     'Sort::Versions'      => '1.50',
     'Test::More'          => '0.47',
-    'Parse::CPAN::Packages' => '2.19',
+    'Parse::CPAN::Packages' => '2.20',
     'Parse::Debian::Packages' => '0.01',
   },
 );

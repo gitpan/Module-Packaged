@@ -7,10 +7,9 @@ use File::Spec::Functions qw(catdir catfile tmpdir);
 use LWP::Simple qw(mirror);
 use Parse::CPAN::Packages;
 use Parse::Debian::Packages;
-use Perl6::Slurp;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.73';
+$VERSION = '0.74';
 
 sub new {
   my $class = shift;
@@ -40,9 +39,12 @@ sub new {
     # Not cached, generate it
     $self->fetch_cpan;
     $self->fetch_debian;
+    $self->fetch_fedora;
     $self->fetch_freebsd;
-#    $self->fetch_gentoo;
+    $self->fetch_gentoo;
+    $self->fetch_mandrake;
     $self->fetch_openbsd;
+    $self->fetch_suse;
     $cache->set('data', $self->{data});
   }
 
@@ -75,6 +77,7 @@ sub fetch_cpan {
 
   my $fh = IO::Zlib->new;
   die "Error opening file $filename!" unless $fh->open($filename, "rb");
+
   my $details = join '', <$fh>;
   $fh->close;
 
@@ -89,17 +92,19 @@ sub fetch_gentoo {
   my $self = shift;
 
   my $filename = $self->mirror_file(
-      "http://www.gentoo.org/dyn/pkgs/dev-perl/index.xml",
+      "http://www.gentoo.org/dyn/gentoo_pkglist_x86.txt",
       "gentoo.html");
 
-  my $file = slurp($filename) || die "Error opening file $filename!";
+  my $file = $self->slurp($filename);
   $file =~ s{</a></td>\n}{</a></td>}g;
 
   my @dists = keys %{$self->{data}};
 
   foreach my $line (split "\n", $file) {
+    next unless ($line =~ m/dev-perl/);
     my $dist;
-    my ($package, $version) = $line =~ m{">([^<]+?)</a>.+">([^<]+?)</td>};
+    $line =~ s/\.ebuild//g; 
+    my ($package, $version, $trash) = split(' ', $line);
     next unless $package;
 
     # Let's try to find a cpan dist that matches the package name
@@ -123,11 +128,56 @@ sub fetch_gentoo {
   }
 }
 
+sub fetch_fedora {
+  my $self = shift;
+  my $filename = $self->mirror_file( "http://fedora.redhat.com/projects/package-list/", "fedora.html" );
+  my $file = $self->slurp($filename);
+
+  foreach my $line (split "\n", $file) {
+    next unless $line =~ /^perl-/;
+    my($dist, $version) = $line =~ m{perl-(.*?)</td><td class="column-2">(.*?)</td>};
+
+    # only populate if CPAN already has
+    $self->{data}{$dist}{fedora} = $version
+      if $self->{data}{$dist};
+  }
+}
+
+sub fetch_suse {
+  my $self = shift;
+  my $filename = $self->mirror_file( "http://www.suse.de/us/private/products/suse_linux/i386/packages_professional/index_all.html", "suse.html" );
+  my $file = $self->slurp($filename);
+
+  foreach my $line (split "\n", $file) {
+    my($dist, $version) = $line =~ m{">perl-(.*?) (.*?) </a>};
+    next unless $dist;
+
+    # only populate if CPAN already has
+    $self->{data}{$dist}{suse} = $version
+      if $self->{data}{$dist};
+  }
+}
+
+sub fetch_mandrake {
+  my $self = shift;
+  my $filename = $self->mirror_file("http://www.mandrakelinux.com/en/10.0/features/15.php3", "mandrake.html" );
+  my $file = $self->slurp($filename);
+
+  foreach my $line (split "\n", $file) {
+    next unless $line =~ /^perl-/;
+    my($dist, $version) = $line =~ m{perl-(.*?)-(.*?)-\d+mdk};
+    next unless $dist;
+
+    # only populate if CPAN already has
+    $self->{data}{$dist}{mandrake} = $version
+      if $self->{data}{$dist};
+  }
+}
 sub fetch_freebsd {
   my $self = shift;
   my $filename = $self->mirror_file( "http://www.freebsd.org/ports/perl5.html",
                                      "freebsd.html" );
-  my $file = slurp($filename) || die "Error opening file $filename!";
+  my $file = $self->slurp($filename);
 
   for my $package ($file =~ m/a id="p5-(.*?)"/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -170,7 +220,7 @@ sub fetch_openbsd {
   my $filename = $self->mirror_file(
       "http://www.openbsd.org/3.4_packages/i386.html",
       "openbsd.html" );
-  my $file = slurp($filename) || die "Error opening file $filename!";
+  my $file = $self->slurp($filename);
 
   for my $package ($file =~ m/href=i386\/p5-(.*?)\.tgz-long/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -185,6 +235,14 @@ sub check {
   my($self, $dist) = @_;
 
   return $self->{data}->{$dist};
+}
+
+sub slurp {
+  my($self, $filename) = @_;
+  open(IN, $filename) || die "Module::Packaged: Error opening file $filename!";
+  my $content = join '', <IN>;
+  close IN;
+  return $content;
 }
 
 1;
@@ -205,13 +263,16 @@ Module::Packaged - Report upon packages of CPAN distributions
   # {
   # cpan    => '1.08',
   # debian  => '1.03',
+  # fedora  => '0.22',
   # freebsd => '1.07',
+  # gentoo  => '1.05',
   # openbsd => '0.22',
+  # suse    => '0.23',
   # }
 
   # meaning that Archive-Tar is at version 1.08 on CPAN but only at
-  # version 1.07 on FreeBSD, version 1.03 on Debian and 0.22 on
-  # OpenBSD
+  # version 1.07 on FreeBSD, version 1.05 on Gentoo, version 1.03 on
+  # Debian, version 0.23 on SUSE and version 0.22 on OpenBSD
 
 =head1 DESCRIPTION
 
@@ -220,12 +281,9 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, Debian, FreeBSD, and OpenBSD are currently
-supported. I want to support versions of PPM, and Redhat. Patches are
-welcome.
-
-It used to support Gentoo but then they "upgraded" their packages
-website and made it hard to scrape this information.
+Note: only CPAN, Debian, Fedora, FreeBSD, Gentoo, Mandrake, OpenBSD
+and SUSE are currently supported. I want to support everything
+else. Patches are welcome.
 
 =head1 COPYRIGHT
 

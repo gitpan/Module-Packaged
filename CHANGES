@@ -1,5 +1,12 @@
 Revision history for Perl module Module::Packaged.
 
+0.74 Thu Apr 22 17:17:21 BST 2004
+  - resupport Gentoo (thanks to patch from Michael Cummings)
+  - remove Perl6::Slurp dependency (sorry, too many deps)
+  - make it work with Parse::CPAN::Packages 2.20 (oops)
+  - added support for Fedora, Mandrake and SUSE
+  - updated the tests
+
 0.73 Thu Mar  4 09:33:38 GMT 2004
   - use Perl6::Slurp instead of File::Slurp
   - remove Gentoo support (the URL we were using is now a 404 and
