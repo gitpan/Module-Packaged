@@ -7,13 +7,13 @@ my $build = Module::Build->new(
   module_name => 'Module::Packaged',
   requires    => {
     'Cache::Cache'        => '1.02',
-    'CPAN::DistnameInfo'  => '0.03',
     'IO::File'            => '1.08',
     'IO::Zlib'            => '1.01',
-    'File::Slurp'         => '2004.0904',
+    'Perl6::Slurp'         => '0.01',
     'LWP::Simple'         => '1.38',
     'Sort::Versions'      => '1.50',
     'Test::More'          => '0.47',
+    'Parse::CPAN::Packages' => '2.19',
     'Parse::Debian::Packages' => '0.01',
   },
 );

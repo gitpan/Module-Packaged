@@ -17,17 +17,17 @@ is_deeply($dists, {
 $dists = $p->check('Archive-Tar');
 is_deeply($dists, {
   cpan    => '1.08',
-  debian  => '1.03',
-  freebsd => '1.07',
-  gentoo  => '1.03',
-  openbsd => '0.22',
+  debian  => '1.08',
+  freebsd => '1.08',
+#  gentoo  => '1.03',
+  openbsd => '1.03',
 }, 'Archive-Tar');
 
 $dists = $p->check('DBI');
 is_deeply($dists, {
-  cpan    => '1.39',
-  debian  => '1.38',
+  cpan    => '1.41',
+  debian  => '1.41',
   freebsd => '1.37',
-  gentoo  => '1.37',
-  openbsd => '1.30',
+#  gentoo  => '1.37',
+  openbsd => '1.37',
 }, 'DBI');

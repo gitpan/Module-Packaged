@@ -1,5 +1,13 @@
 Revision history for Perl module Module::Packaged.
 
+0.73 Thu Mar  4 09:33:38 GMT 2004
+  - use Perl6::Slurp instead of File::Slurp
+  - remove Gentoo support (the URL we were using is now a 404 and
+    packages.gentoo.org isn't easy to scrape)
+  - report OpenBSD packages in 3.4 (3.2 is old now)
+  - updated the tests
+  - now use Parse::CPAN::Packages
+
 0.72 Wed Jan  7 16:25:31 GMT 2004
   - a new version of Archive::Tar came out, update the tests
 

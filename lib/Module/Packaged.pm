@@ -1,16 +1,16 @@
 package Module::Packaged;
 use strict;
-use CPAN::DistnameInfo;
 use Cache::FileCache;
 use IO::File;
 use IO::Zlib;
-use File::Slurp;
 use File::Spec::Functions qw(catdir catfile tmpdir);
 use LWP::Simple qw(mirror);
+use Parse::CPAN::Packages;
 use Parse::Debian::Packages;
+use Perl6::Slurp;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.72';
+$VERSION = '0.73';
 
 sub new {
   my $class = shift;
@@ -41,7 +41,7 @@ sub new {
     $self->fetch_cpan;
     $self->fetch_debian;
     $self->fetch_freebsd;
-    $self->fetch_gentoo;
+#    $self->fetch_gentoo;
     $self->fetch_openbsd;
     $cache->set('data', $self->{data});
   }
@@ -75,24 +75,14 @@ sub fetch_cpan {
 
   my $fh = IO::Zlib->new;
   die "Error opening file $filename!" unless $fh->open($filename, "rb");
-
-  # Skip the prologue
-  1 while <$fh> ne "\n";
-
-  while (my $line = <$fh>) {
-    chomp $line;
-    my($module, $version, $prefix) = split / +/, $line;
-    my $d = CPAN::DistnameInfo->new($prefix);
-    my $dist = $d->dist;
-    next unless $dist;
-    # We want the highest version
-    my $new = $d->version || '0';
-    my $old = $self->{data}->{$dist}->{cpan} || '0';
-    my $high = (sort { versioncmp($a, $b) } $new, $old)[1];
-    $self->{data}->{$dist}->{cpan} = $high;
-  }
-
+  my $details = join '', <$fh>;
   $fh->close;
+
+  my $p = Parse::CPAN::Packages->new($details);
+
+  foreach my $dist ($p->latest_distributions) {
+    $self->{data}->{$dist->dist}->{cpan} = $dist->version;
+  }
 }
 
 sub fetch_gentoo {
@@ -102,7 +92,7 @@ sub fetch_gentoo {
       "http://www.gentoo.org/dyn/pkgs/dev-perl/index.xml",
       "gentoo.html");
 
-  my $file = read_file($filename) || die "Error opening file $filename!";
+  my $file = slurp($filename) || die "Error opening file $filename!";
   $file =~ s{</a></td>\n}{</a></td>}g;
 
   my @dists = keys %{$self->{data}};
@@ -137,7 +127,7 @@ sub fetch_freebsd {
   my $self = shift;
   my $filename = $self->mirror_file( "http://www.freebsd.org/ports/perl5.html",
                                      "freebsd.html" );
-  my $file = read_file($filename) || die "Error opening file $filename!";
+  my $file = slurp($filename) || die "Error opening file $filename!";
 
   for my $package ($file =~ m/a id="p5-(.*?)"/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -178,9 +168,9 @@ sub fetch_debian {
 sub fetch_openbsd {
   my $self = shift;
   my $filename = $self->mirror_file(
-      "http://www.openbsd.org/3.2_packages/i386.html",
+      "http://www.openbsd.org/3.4_packages/i386.html",
       "openbsd.html" );
-  my $file = read_file($filename) || die "Error opening file $filename!";
+  my $file = slurp($filename) || die "Error opening file $filename!";
 
   for my $package ($file =~ m/href=i386\/p5-(.*?)\.tgz-long/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -216,12 +206,11 @@ Module::Packaged - Report upon packages of CPAN distributions
   # cpan    => '1.08',
   # debian  => '1.03',
   # freebsd => '1.07',
-  # gentoo  => '1.03',
   # openbsd => '0.22',
   # }
 
   # meaning that Archive-Tar is at version 1.08 on CPAN but only at
-  # version 1.07 on FreeBSD, version 1.03 on Debian Gentoo and 0.22 on
+  # version 1.07 on FreeBSD, version 1.03 on Debian and 0.22 on
   # OpenBSD
 
 =head1 DESCRIPTION
@@ -231,13 +220,16 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, Debian, FreeBSD, Gentoo, and OpenBSD are currently
+Note: only CPAN, Debian, FreeBSD, and OpenBSD are currently
 supported. I want to support versions of PPM, and Redhat. Patches are
 welcome.
 
+It used to support Gentoo but then they "upgraded" their packages
+website and made it hard to scrape this information.
+
 =head1 COPYRIGHT
 
-Copyright (c) 2003 Leon Brocard. All rights reserved. This program is
+Copyright (c) 2003-4 Leon Brocard. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Perl itself.
 
