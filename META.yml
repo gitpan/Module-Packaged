@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name: Module-Packaged
-version: 0.77
+version: 0.78
 author:
   - Leon Brocard, leon@astray.com
 abstract: Report upon packages of CPAN distributions
@@ -16,5 +16,5 @@ requires:
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.77
-generated_by: Module::Build version 0.25
+    version: 0.78
+generated_by: Module::Build version 0.2605

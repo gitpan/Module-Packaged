@@ -1,5 +1,9 @@
 Revision history for Perl module Module::Packaged.
 
+0.78 Sat Feb  5 17:20:48 GMT 2005
+  - updated the tests
+  - fixed brokenness with Fedora, Mandrake, SUSE
+
 0.77 Thu Sep 23 11:45:51 BST 2004
   - slightly more documentation
   - renamed private methods to start with underscore

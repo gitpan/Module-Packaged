@@ -9,7 +9,7 @@ use Parse::Debian::Packages;
 use Sort::Versions;
 use Storable qw(store retrieve);
 use vars qw($VERSION);
-$VERSION = '0.77';
+$VERSION = '0.78';
 
 sub new {
   my $class = shift;
@@ -117,7 +117,7 @@ sub _fetch_gentoo {
 
 sub _fetch_fedora {
   my $self = shift;
-  my $filename = $self->_mirror_file( "http://fedora.redhat.com/projects/package-list/", "fedora.html" );
+  my $filename = $self->_mirror_file( "http://fedora.redhat.com/docs/package-list/fc2/", "fedora.html" );
   my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
@@ -132,10 +132,11 @@ sub _fetch_fedora {
 
 sub _fetch_suse {
   my $self = shift;
-  my $filename = $self->_mirror_file( "http://www.suse.de/us/private/products/suse_linux/i386/packages_professional/index_all.html", "suse.html" );
+  my $filename = $self->_mirror_file("http://www.novell.com/products/linuxpackages/professional/index_all.html", "suse.html" );
   my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
+#    <a href="perl-dbi.html">perl-DBI 1.43 </a> (The Perl Database Interface)
     my($dist, $version) = $line =~ m{">perl-(.*?) (.*?) </a>};
     next unless $dist;
 
@@ -147,12 +148,13 @@ sub _fetch_suse {
 
 sub _fetch_mandrake {
   my $self = shift;
-  my $filename = $self->_mirror_file("http://www.mandrakelinux.com/en/10.0/features/15.php3", "mandrake.html" );
+  my $filename = $self->_mirror_file("http://www.mandrakelinux.com/en/10.1/features/14.php3", "mandrake.html" );
   my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
-    next unless $line =~ /^perl-/;
-    my($dist, $version) = $line =~ m{perl-(.*?)-(.*?)-\d+mdk};
+    next unless $line =~ /^<b>perl-/;
+#<b>perl-DBI 1.43-2mdk</b> : The Perl Database Interface<br>
+    my($dist, $version) = $line =~ m{perl-(.*?) (.*?)-\d+mdk};
     next unless $dist;
 
     # only populate if CPAN already has
@@ -166,10 +168,11 @@ sub _fetch_freebsd {
                                      "freebsd.html" );
   my $file = $self->_slurp($filename);
 
-  for my $package ($file =~ m/a id="p5-(.*?)"/g) {
+#<DT><B><A NAME="p5-DBI-1.37"></A><A HREF="http://www.FreeBSD.org/cgi/cvsweb.cgi/ports/databases/p5-DBI-137">p5-DBI-1.37</A></B> </DT>
+  for my $package ($file =~ m/A NAME="p5-(.*?)"/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
-    # tidy up the oddness that is p5-DBI-137-1.37
-    $version =~ s/^\d+-//;
+    # tidy up the oddness FreeBSD versions
+    $version =~ s/_\d$//;
 
     # only populate if CPAN already has
     $self->{data}{$dist}{freebsd} = $version
@@ -205,7 +208,7 @@ sub _fetch_debian {
 sub _fetch_openbsd {
   my $self = shift;
   my $filename = $self->_mirror_file(
-      "http://www.openbsd.org/3.4_packages/i386.html",
+       "http://www.openbsd.org/3.6_packages/i386.html",
       "openbsd.html" );
   my $file = $self->_slurp($filename);
 
@@ -268,9 +271,9 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, Debian, Fedora, FreeBSD, Gentoo, Mandrake, OpenBSD
-and SUSE are currently supported. I want to support everything
-else. Patches are welcome.
+Note: only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandrake
+(10.1), OpenBSD (3.6) and SUSE (9.2) are currently supported. I want to
+support everything else. Patches are welcome.
 
 =head1 METHODS
 
@@ -289,7 +292,7 @@ distributions, the values the version number included:
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003-4 Leon Brocard. All rights reserved. This program is
+Copyright (c) 2003-5 Leon Brocard. All rights reserved. This program is
 free software; you can redistribute it and/or modify it under the same
 terms as Perl itself.
 
