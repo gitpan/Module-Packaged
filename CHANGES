@@ -1,5 +1,9 @@
 Revision history for Perl module Module::Packaged.
 
+0.77 Thu Sep 23 11:45:51 BST 2004
+  - slightly more documentation
+  - renamed private methods to start with underscore
+
 0.76 Tue Aug 24 16:14:25 BST 2004
   - removed dependency on Cache::Cache
   - updated the tests (maybe I should fix the test suite, eh?)

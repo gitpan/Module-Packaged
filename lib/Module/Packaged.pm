@@ -9,15 +9,13 @@ use Parse::Debian::Packages;
 use Sort::Versions;
 use Storable qw(store retrieve);
 use vars qw($VERSION);
-$VERSION = '0.76';
+$VERSION = '0.77';
 
 sub new {
   my $class = shift;
   my $self = {};
   bless $self, $class;
 
-  # At some point I should unify these caching schemes, but for now
-  # let's be ultra nice to the websites
   my $dir = tmpdir();
   $dir = catdir($dir, "mod_pac");
   mkdir $dir || die "Failed to mkdir $dir";
@@ -32,21 +30,21 @@ sub new {
     $self->{data} = $data;
   } else {
     # Not cached, generate it
-    $self->fetch_cpan;
-    $self->fetch_debian;
-    $self->fetch_fedora;
-    $self->fetch_freebsd;
-    $self->fetch_gentoo;
-    $self->fetch_mandrake;
-    $self->fetch_openbsd;
-    $self->fetch_suse;
+    $self->_fetch_cpan;
+    $self->_fetch_debian;
+    $self->_fetch_fedora;
+    $self->_fetch_freebsd;
+    $self->_fetch_gentoo;
+    $self->_fetch_mandrake;
+    $self->_fetch_openbsd;
+    $self->_fetch_suse;
     store($self->{data}, "$dir/stored") || die "Error storing: $!";
   }
 
   return $self;
 }
 
-sub mirror_file {
+sub _mirror_file {
   my $self = shift;
   my $url  = shift;
   my $file = shift;
@@ -59,9 +57,9 @@ sub mirror_file {
   return $filename;
 }
 
-sub fetch_cpan {
+sub _fetch_cpan {
   my $self = shift;
-  my $filename = $self->mirror_file(
+  my $filename = $self->_mirror_file(
       "http://cpan.geekflat.org/modules/02packages.details.txt.gz",
       "02packages.gz" );
 
@@ -77,14 +75,14 @@ sub fetch_cpan {
   }
 }
 
-sub fetch_gentoo {
+sub _fetch_gentoo {
   my $self = shift;
 
-  my $filename = $self->mirror_file(
+  my $filename = $self->_mirror_file(
       "http://www.gentoo.org/dyn/gentoo_pkglist_x86.txt",
       "gentoo.html");
 
-  my $file = $self->slurp($filename);
+  my $file = $self->_slurp($filename);
   $file =~ s{</a></td>\n}{</a></td>}g;
 
   my @dists = keys %{$self->{data}};
@@ -117,10 +115,10 @@ sub fetch_gentoo {
   }
 }
 
-sub fetch_fedora {
+sub _fetch_fedora {
   my $self = shift;
-  my $filename = $self->mirror_file( "http://fedora.redhat.com/projects/package-list/", "fedora.html" );
-  my $file = $self->slurp($filename);
+  my $filename = $self->_mirror_file( "http://fedora.redhat.com/projects/package-list/", "fedora.html" );
+  my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
     next unless $line =~ /^perl-/;
@@ -132,10 +130,10 @@ sub fetch_fedora {
   }
 }
 
-sub fetch_suse {
+sub _fetch_suse {
   my $self = shift;
-  my $filename = $self->mirror_file( "http://www.suse.de/us/private/products/suse_linux/i386/packages_professional/index_all.html", "suse.html" );
-  my $file = $self->slurp($filename);
+  my $filename = $self->_mirror_file( "http://www.suse.de/us/private/products/suse_linux/i386/packages_professional/index_all.html", "suse.html" );
+  my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
     my($dist, $version) = $line =~ m{">perl-(.*?) (.*?) </a>};
@@ -147,10 +145,10 @@ sub fetch_suse {
   }
 }
 
-sub fetch_mandrake {
+sub _fetch_mandrake {
   my $self = shift;
-  my $filename = $self->mirror_file("http://www.mandrakelinux.com/en/10.0/features/15.php3", "mandrake.html" );
-  my $file = $self->slurp($filename);
+  my $filename = $self->_mirror_file("http://www.mandrakelinux.com/en/10.0/features/15.php3", "mandrake.html" );
+  my $file = $self->_slurp($filename);
 
   foreach my $line (split "\n", $file) {
     next unless $line =~ /^perl-/;
@@ -162,11 +160,11 @@ sub fetch_mandrake {
       if $self->{data}{$dist};
   }
 }
-sub fetch_freebsd {
+sub _fetch_freebsd {
   my $self = shift;
-  my $filename = $self->mirror_file( "http://www.freebsd.org/ports/perl5.html",
+  my $filename = $self->_mirror_file( "http://www.freebsd.org/ports/perl5.html",
                                      "freebsd.html" );
-  my $file = $self->slurp($filename);
+  my $file = $self->_slurp($filename);
 
   for my $package ($file =~ m/a id="p5-(.*?)"/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -179,12 +177,12 @@ sub fetch_freebsd {
   }
 }
 
-sub fetch_debian {
+sub _fetch_debian {
     my $self = shift;
 
     my %dists = map { lc $_ => $_ } keys %{ $self->{data} };
     for my $dist (qw( stable testing unstable )) {
-        my $filename = $self->mirror_file(
+        my $filename = $self->_mirror_file(
             "http://ftp.debian.org/dists/$dist/main/binary-i386/Packages.gz",
             "debian-$dist-Packages.gz" );
 
@@ -204,12 +202,12 @@ sub fetch_debian {
     }
 }
 
-sub fetch_openbsd {
+sub _fetch_openbsd {
   my $self = shift;
-  my $filename = $self->mirror_file(
+  my $filename = $self->_mirror_file(
       "http://www.openbsd.org/3.4_packages/i386.html",
       "openbsd.html" );
-  my $file = $self->slurp($filename);
+  my $file = $self->_slurp($filename);
 
   for my $package ($file =~ m/href=i386\/p5-(.*?)\.tgz-long/g) {
     my ($dist, $version) = $package =~ /^(.*?)-(\d.*)$/ or next;
@@ -226,7 +224,7 @@ sub check {
   return $self->{data}->{$dist};
 }
 
-sub slurp {
+sub _slurp {
   my($self, $filename) = @_;
   open(IN, $filename) || die "Module::Packaged: Error opening file $filename!";
   my $content = join '', <IN>;
@@ -273,6 +271,21 @@ packaged for various operating systems, and which version they have.
 Note: only CPAN, Debian, Fedora, FreeBSD, Gentoo, Mandrake, OpenBSD
 and SUSE are currently supported. I want to support everything
 else. Patches are welcome.
+
+=head1 METHODS
+
+=head2 new()
+
+The new() method is a constructor:
+
+  my $p = Module::Packaged->new();
+
+=head2 check()
+
+The check() method returns a hash reference. The keys are various
+distributions, the values the version number included:
+
+  my $dists = $p->check('Archive-Tar');
 
 =head1 COPYRIGHT
 

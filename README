@@ -10,14 +10,16 @@ SYNOPSIS
       # {
       # cpan    => '1.08',
       # debian  => '1.03',
+      # fedora  => '0.22',
       # freebsd => '1.07',
-      # gentoo  => '1.03',
+      # gentoo  => '1.05',
       # openbsd => '0.22',
+      # suse    => '0.23',
       # }
 
       # meaning that Archive-Tar is at version 1.08 on CPAN but only at
-      # version 1.07 on FreeBSD, version 1.03 on Debian Gentoo and 0.22 on
-      # OpenBSD
+      # version 1.07 on FreeBSD, version 1.05 on Gentoo, version 1.03 on
+      # Debian, version 0.23 on SUSE and version 0.22 on OpenBSD
 
 DESCRIPTION
     CPAN consists of distributions. However, CPAN is not an isolated system
@@ -25,12 +27,24 @@ DESCRIPTION
     systems. This module reports whether CPAN distributions are packaged for
     various operating systems, and which version they have.
 
-    Note: only CPAN, Debian, FreeBSD, Gentoo, and OpenBSD are currently
-    supported. I want to support versions of PPM, and Redhat. Patches are
-    welcome.
+    Note: only CPAN, Debian, Fedora, FreeBSD, Gentoo, Mandrake, OpenBSD and
+    SUSE are currently supported. I want to support everything else. Patches
+    are welcome.
+
+METHODS
+  new()
+    The new() method is a constructor:
+
+      my $p = Module::Packaged->new();
+
+  check()
+    The check() method returns a hash reference. The keys are various
+    distributions, the values the version number included:
+
+      my $dists = $p->check('Archive-Tar');
 
 COPYRIGHT
-    Copyright (c) 2003 Leon Brocard. All rights reserved. This program is
+    Copyright (c) 2003-4 Leon Brocard. All rights reserved. This program is
     free software; you can redistribute it and/or modify it under the same
     terms as Perl itself.
 
