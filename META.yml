@@ -1,14 +1,16 @@
 --- #YAML:1.0
 name: Module-Packaged
-version: 0.41
+version: 0.54
 license: perl
 distribution_type: module
 requires:
   CPAN::DistnameInfo: 0.03
+  Cache::Cache: 1.02
   File::Slurp: 2004.0904
   IO::File: 1.08
   IO::Zlib: 1.01
   LWP::Simple: 1.38
+  Parse::Debian::Packages: 0.01
   Sort::Versions: 1.50
   Test::More: 0.47
 recommends: {}
@@ -17,5 +19,5 @@ conflicts: {}
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.41
+    version: 0.54
 generated_by: Module::Build version 0.21

@@ -6,6 +6,7 @@ my $build = Module::Build->new(
   license     => 'perl',
   module_name => 'Module::Packaged',
   requires    => {
+    'Cache::Cache'        => '1.02',
     'CPAN::DistnameInfo'  => '0.03',
     'IO::File'            => '1.08',
     'IO::Zlib'            => '1.01',
@@ -13,6 +14,7 @@ my $build = Module::Build->new(
     'LWP::Simple'         => '1.38',
     'Sort::Versions'      => '1.50',
     'Test::More'          => '0.47',
+    'Parse::Debian::Packages' => '0.01',
   },
 );
 $build->create_build_script;

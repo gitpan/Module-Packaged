@@ -4,16 +4,18 @@ use ExtUtils::MakeMaker;
 WriteMakefile
   (
    NAME        => 'Module::Packaged',
-   VERSION     => '0.41',
+   VERSION     => '0.54',
    PL_FILES    => {},
    INSTALLDIRS => 'site',
    PREREQ_PM   => {
-		 'Test::More' => '0.47',
 		 'IO::Zlib' => '1.01',
 		 'IO::File' => '1.08',
+		 'CPAN::DistnameInfo' => '0.03',
+		 'Cache::Cache' => '1.02',
+		 'Test::More' => '0.47',
+		 'Parse::Debian::Packages' => '0.01',
 		 'Sort::Versions' => '1.50',
 		 'LWP::Simple' => '1.38',
-		 'CPAN::DistnameInfo' => '0.03',
 		 'File::Slurp' => '2004.0904',
 		  },
   );

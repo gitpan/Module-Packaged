@@ -1,31 +1,56 @@
 package Module::Packaged;
 use strict;
 use CPAN::DistnameInfo;
+use Cache::FileCache;
 use IO::File;
 use IO::Zlib;
 use File::Slurp;
 use File::Spec::Functions qw(catdir catfile tmpdir);
 use LWP::Simple qw(mirror);
+use Parse::Debian::Packages;
 use Sort::Versions;
 use vars qw($VERSION);
-$VERSION = '0.41';
+$VERSION = '0.54';
 
 sub new {
   my $class = shift;
   my $self = {};
   bless $self, $class;
 
+  # At some point I should unify these caching schemes, but for now
+  # let's be ultra nice to the websites
   my $dir = tmpdir();
   $dir = catdir($dir, "mod_pac");
   mkdir $dir || die "Failed to mkdir $dir";
   chmod 0777, $dir || die "Failed to chmod $dir";
   $self->{DIR} = $dir;
 
-  $self->fetch_cpan;
-  $self->fetch_gentoo;
-  $self->fetch_freebsd;
+  # The data takes a while to parse, so let's cache it
+  my $cache = Cache::FileCache->new({
+    'namespace'          => 'module_packaged',
+    'default_expires_in' => '1 hour',
+    'cache_depth'        => 1,
+  });
+
+  my $data = $cache->get('data');
+  if (defined $data) {
+    # It's cached, excellent
+    $self->{data} = $data;
+  } else {
+    # Not cached, generate it
+    $self->fetch_cpan;
+    $self->fetch_gentoo;
+    $self->fetch_freebsd;
+    $self->fetch_debian;
+    $cache->set('data', $self->{data});
+  }
 
   return $self;
+}
+
+sub cache {
+  my $self = shift;
+  return $self->{cache};
 }
 
 sub mirror_file {
@@ -124,6 +149,31 @@ sub fetch_freebsd {
   }
 }
 
+sub fetch_debian {
+    my $self = shift;
+
+    my %dists = map { lc $_ => $_ } keys %{ $self->{data} };
+    for my $dist (qw( stable testing unstable )) {
+        my $filename = $self->mirror_file(
+            "http://ftp.debian.org/dists/$dist/main/binary-i386/Packages.gz",
+            "debian-$dist-Packages.gz" );
+
+        my $fh = IO::Zlib->new;
+        die "Error opening file $filename!" unless $fh->open($filename, "rb");
+
+        my $debthing = Parse::Debian::Packages->new( $fh );
+        while (my %package = $debthing->next) {
+            next unless $package{Package} =~ /lib(.*?)-perl$/;
+            my $dist = $dists{ $1 } or next;
+            # don't care about the debian version
+            my ($version) = $package{Version} =~ /^(.*?)-/;
+
+            $self->{data}{$dist}{debian} = $version
+              if $self->{data}{$dist};
+        }
+    }
+}
+
 sub check {
   my($self, $dist) = @_;
 
@@ -144,9 +194,15 @@ Module::Packaged - Report upon packages of CPAN distributions
 
   my $p = Module::Packaged->new();
   my $dists = $p->check('Archive-Tar');
-  # $dists is now {cpan => '1.07', gentoo => '1.03', freebsd => '1.07' }
+  # $dists is now:
+  # {
+  # cpan    => '1.07',
+  # debian  => '1.03',
+  # freebsd => '1.07',
+  # gentoo  => '1.03',
+  # }
   # meaning that Archive-Tar is at version 1.07 on CPAN and FreeBSD
-  # but only version 1.03 on Gentoo
+  # but only version 1.03 on Debian Gentoo
 
 =head1 DESCRIPTION
 
@@ -155,8 +211,8 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, FreeBSD and Gentoo are currently supported. I want to
-support versions of Debian, OpenBSD, PPM, and Redhat. Patches are
+Note: only CPAN, Debian, FreeBSD and Gentoo are currently supported. I
+want to support versions of OpenBSD, PPM, and Redhat. Patches are
 welcome.
 
 =head1 COPYRIGHT
