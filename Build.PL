@@ -3,17 +3,18 @@ use Module::Build;
 
 my $build = Module::Build->new(
   create_makefile_pl => 'traditional',
-  license     => 'perl',
-  module_name => 'Module::Packaged',
-  requires    => {
-    'Compress::Zlib'      => '0',
-    'Storable'            => '0',
-    'IO::File'            => '1.08',
-    'IO::Zlib'            => '1.01',
-    'LWP::Simple'         => '1.38',
-    'Sort::Versions'      => '1.50',
-    'Test::More'          => '0.47',
-    'Parse::CPAN::Packages' => '2.20',
+  license            => 'perl',
+  module_name        => 'Module::Packaged',
+  requires           => {
+    'App::Cache'              => '0',
+    'Compress::Zlib'          => '0',
+    'Storable'                => '0',
+    'IO::File'                => '1.08',
+    'IO::Zlib'                => '1.01',
+    'LWP::Simple'             => '1.38',
+    'Sort::Versions'          => '1.50',
+    'Test::More'              => '0.47',
+    'Parse::CPAN::Packages'   => '2.20',
     'Parse::Debian::Packages' => '0.01',
   },
 );

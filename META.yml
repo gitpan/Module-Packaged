@@ -1,11 +1,12 @@
---- #YAML:1.0
+---
 name: Module-Packaged
-version: 0.80
+version: 0.81
 author:
-  - Leon Brocard, leon@astray.com
+  - 'Leon Brocard, leon@astray.com'
 abstract: Report upon packages of CPAN distributions
 license: perl
 requires:
+  App::Cache: 0
   Compress::Zlib: 0
   IO::File: 1.08
   IO::Zlib: 1.01
@@ -18,8 +19,8 @@ requires:
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.80
+    version: 0.81
   Module::Packaged::Generate:
     file: lib/Module/Packaged/Generate.pm
     version: 0.80
-generated_by: Module::Build version 0.2605
+generated_by: Module::Build version 0.261

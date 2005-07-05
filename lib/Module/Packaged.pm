@@ -1,23 +1,25 @@
 package Module::Packaged;
 use strict;
+use App::Cache;
 use Compress::Zlib;
 use LWP::Simple;
 use Storable qw(thaw);
 use vars qw($VERSION);
-$VERSION = '0.80';
+$VERSION = '0.81';
 
 sub new {
   my $class = shift;
-  my $self = {};
+  my $self  = {};
   bless $self, $class;
 
-  my $data = get("http://www.astray.com/tmp/module_packaged.gz");
+  my $cache = App::Cache->new({ ttl => 60 * 60 });
+  my $data = $cache->get_url('http://www.astray.com/tmp/module_packaged.gz');
   $self->{data} = thaw(uncompress($data));
   return $self;
 }
 
 sub check {
-  my($self, $dist) = @_;
+  my ($self, $dist) = @_;
   return $self->{data}->{$dist};
 }
 
@@ -57,9 +59,11 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Note: only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandrake
-(10.1), OpenBSD (3.6) and SUSE (9.2) are currently supported. I want to
-support everything else. Patches are welcome.
+Only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandrake (10.1),
+OpenBSD (3.6) and SUSE (9.2) are currently supported. I want to support
+everything else. Patches are welcome.
+
+The data is fetched from the net and cached for an hour.
 
 =head1 METHODS
 

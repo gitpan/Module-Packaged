@@ -5,6 +5,7 @@ WriteMakefile
           'NAME' => 'Module::Packaged',
           'VERSION_FROM' => 'lib/Module/Packaged.pm',
           'PREREQ_PM' => {
+                           'App::Cache' => '0',
                            'Compress::Zlib' => '0',
                            'IO::File' => '1.08',
                            'IO::Zlib' => '1.01',
