@@ -5,7 +5,7 @@ use Compress::Zlib;
 use LWP::Simple;
 use Storable qw(thaw);
 use vars qw($VERSION);
-$VERSION = '0.82';
+$VERSION = '0.83';
 
 sub new {
   my $class = shift;

@@ -1,5 +1,8 @@
 Revision history for Perl module Module::Packaged:
 
+0.83 Thu Aug  4 09:30:04 PDT 2005
+  - 0.82 wasn't quite uploaded to CPAN, pesky wireless
+
 0.82 Thu Aug  4 09:16:13 PDT 2005
   - updated the tests (thanks Andreas)
 
