@@ -19,7 +19,7 @@ is_deeply($dists, {
   cpan    => '1.24',
   debian  => '1.23',
   fedora  => '1.08',
-  freebsd => '1.23',
+  freebsd => '1.24',
   gentoo  => '1.23',
   mandrake => '1.23',
   openbsd => '1.08',

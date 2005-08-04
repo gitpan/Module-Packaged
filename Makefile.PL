@@ -2,21 +2,21 @@
 use ExtUtils::MakeMaker;
 WriteMakefile
 (
+          'PL_FILES' => {},
+          'INSTALLDIRS' => 'site',
           'NAME' => 'Module::Packaged',
           'VERSION_FROM' => 'lib/Module/Packaged.pm',
           'PREREQ_PM' => {
-                           'App::Cache' => '0',
-                           'Compress::Zlib' => '0',
-                           'IO::File' => '1.08',
-                           'IO::Zlib' => '1.01',
-                           'LWP::Simple' => '1.38',
                            'Parse::CPAN::Packages' => '2.20',
+                           'IO::Zlib' => '1.01',
+                           'IO::File' => '1.08',
+                           'Compress::Zlib' => '0',
+                           'Storable' => '0',
+                           'App::Cache' => '0',
+                           'Test::More' => '0.47',
                            'Parse::Debian::Packages' => '0.01',
                            'Sort::Versions' => '1.50',
-                           'Storable' => '0',
-                           'Test::More' => '0.47'
-                         },
-          'INSTALLDIRS' => 'site',
-          'PL_FILES' => {}
+                           'LWP::Simple' => '1.38'
+                         }
         )
 ;

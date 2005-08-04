@@ -1,5 +1,8 @@
 Revision history for Perl module Module::Packaged:
 
+0.82 Thu Aug  4 09:16:13 PDT 2005
+  - updated the tests (thanks Andreas)
+
 0.81 Mon Jul  4 23:24:32 BST 2005
   - we now cache the data for an hour using App::Cache
   - added a pod coverage test

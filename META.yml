@@ -1,6 +1,6 @@
 ---
 name: Module-Packaged
-version: 0.81
+version: 0.82
 author:
   - 'Leon Brocard, leon@astray.com'
 abstract: Report upon packages of CPAN distributions
@@ -19,8 +19,8 @@ requires:
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.81
+    version: 0.82
   Module::Packaged::Generate:
     file: lib/Module/Packaged/Generate.pm
     version: 0.80
-generated_by: Module::Build version 0.261
+generated_by: Module::Build version 0.2611
