@@ -11,9 +11,11 @@ WriteMakefile
                            'IO::Zlib' => '1.01',
                            'IO::File' => '1.08',
                            'Compress::Zlib' => '0',
+                           'IO::String' => '0',
                            'Storable' => '0',
                            'App::Cache' => '0',
                            'Test::More' => '0.47',
+                           'Class::Accessor::Chained::Fast' => '0',
                            'Parse::Debian::Packages' => '0.01',
                            'Sort::Versions' => '1.50',
                            'LWP::Simple' => '1.38'

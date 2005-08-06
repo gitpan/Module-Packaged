@@ -1,5 +1,9 @@
 Revision history for Perl module Module::Packaged:
 
+0.84 Fri Aug  5 19:04:55 PDT 2005
+  - rewrite the generator to use App::Cache and update Mandriva name
+  - fix Debian perl-tk misreporting (patch by Andreas Koenig)
+
 0.83 Thu Aug  4 09:30:04 PDT 2005
   - 0.82 wasn't quite uploaded to CPAN, pesky wireless
 

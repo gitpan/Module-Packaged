@@ -5,7 +5,7 @@ use Compress::Zlib;
 use LWP::Simple;
 use Storable qw(thaw);
 use vars qw($VERSION);
-$VERSION = '0.83';
+$VERSION = '0.84';
 
 sub new {
   my $class = shift;
@@ -59,7 +59,7 @@ system - distributions are also packaged in other places, such as for
 operating systems. This module reports whether CPAN distributions are
 packaged for various operating systems, and which version they have.
 
-Only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandrake (10.1),
+Only CPAN, Debian, Fedora (Core 2), FreeBSD, Gentoo, Mandriva (10.1),
 OpenBSD (3.6) and SUSE (9.2) are currently supported. I want to support
 everything else. Patches are welcome.
 

@@ -1,14 +1,16 @@
 ---
 name: Module-Packaged
-version: 0.83
+version: 0.84
 author:
   - 'Leon Brocard, leon@astray.com'
 abstract: Report upon packages of CPAN distributions
 license: perl
 requires:
   App::Cache: 0
+  Class::Accessor::Chained::Fast: 0
   Compress::Zlib: 0
   IO::File: 1.08
+  IO::String: 0
   IO::Zlib: 1.01
   LWP::Simple: 1.38
   Parse::CPAN::Packages: 2.20
@@ -19,8 +21,7 @@ requires:
 provides:
   Module::Packaged:
     file: lib/Module/Packaged.pm
-    version: 0.83
+    version: 0.84
   Module::Packaged::Generate:
     file: lib/Module/Packaged/Generate.pm
-    version: 0.80
 generated_by: Module::Build version 0.2611
