@@ -132,11 +132,11 @@ sub _fetch_suse {
 sub _fetch_mandrake {
   my $self  = shift;
   my $file1 = $self->cache->get_url(
-"http://distro.ibiblio.org/pub/linux/distributions/mandriva/MandrivaLinux/official/current/i586/media/media_info/synthesis.hdlist_main.cz",
+"http://distro.ibiblio.org/pub/linux/distributions/mandriva/MandrivaLinux/official/10.2/i586/media/media_info/synthesis.hdlist_main.cz",
     "mandrake1.html"
   );
   my $file2 = $self->cache->get_url(
-"http://distro.ibiblio.org/pub/linux/distributions/mandriva/MandrivaLinux/official/current/i586/media/media_info/synthesis.hdlist_contrib.cz",
+"http://distro.ibiblio.org/pub/linux/distributions/mandriva/MandrivaLinux/official/10.2/i586/media/media_info/synthesis.hdlist_contrib.cz",
     "mandrake2.html"
   );
 
