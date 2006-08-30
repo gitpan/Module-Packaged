@@ -1,5 +1,9 @@
 Revision history for Perl module Module::Packaged:
 
+0.86 Wed Aug 30 14:36:40 BST 2006
+  - fix the path we were fetching SUSE data from
+  - updated the test (prodded by jerakeen)
+
 0.85 Tue Jan 31 09:38:02 GMT 2006
   - fix the path we were fetching Mandriva data from
 

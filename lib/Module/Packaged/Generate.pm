@@ -113,7 +113,7 @@ sub _fetch_fedora {
 sub _fetch_suse {
   my $self = shift;
   my $file = $self->cache->get_url(
-    "http://www.novell.com/products/linuxpackages/professional/index_all.html",
+    "http://www.novell.com/products/linuxpackages/suselinux/index_all.html",
     "suse.html"
   );
 
